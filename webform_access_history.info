@@ -1,0 +1,6 @@
+name = Webform Access History
+description = Records who looks at webforms
+dependencies[] = webform
+package = SoC
+core = 7.x
+

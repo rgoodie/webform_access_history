@@ -1,0 +1,108 @@
+<?php
+
+/**
+ * @file
+ * TODO: Enter file description here.
+ */
+define('WAH_TABLE_NAME', 'webform_access_history');
+
+
+
+/**
+ * Implements hook_menu().
+ */
+function webform_access_history_menu()
+{
+    $items['webform/access'] = array(
+        'title' => 'Submissions Page',
+        'page callback' => 'webform_access_history_report',
+        'access arguments' => array('see submission viewing list'),
+        'type' => MENU_CALLBACK,
+        'file'=>'webform_access_history.report.inc',
+    );
+
+    $items['webform/access/clear'] = array(
+        'title' => 'Submissions Page',
+        'page callback' => 'webform_access_history_housekeeping_reset',
+        'access arguments' => array('wah reset table'),
+        'type' => MENU_CALLBACK,
+        'file'=>'webform_access_history.housekeeping.inc',
+    );
+
+    return $items;
+}
+
+function webform_access_history_permission() {
+    return array(
+        'see submission viewing list' =>  array(
+            'title' => t('See who has looked at webform submissions'),
+            'description' => t('Who is allowed to see submissions look up activity'),
+        ),
+        'wah reset table' =>  array(
+            'title' => t('Reset table history'),
+            'description' => t('Clears table. Almost like uninstalling and re-installing module'),
+        ),
+    );
+}
+
+/**
+ *
+ * @param $submissions
+ */
+function webform_access_history_webform_submission_load(&$submissions)
+{
+
+    dpm($submissions);
+
+    $whoami = $GLOBALS['user'];
+
+    foreach ($submissions as $sub) {
+        db_insert(WAH_TABLE_NAME)
+            ->fields(array(
+                'logged_in_uid' => $whoami->uid,
+                'submitted_uid' => $sub->uid,
+                'sid' => $sub->sid,
+                'nid' => $sub->nid,
+                'timestamp'=>time(),
+            ))
+            ->execute();
+    }
+
+
+}
+
+
+function webform_access_history_install() {
+    _webform_access_history_firstrun();
+}
+
+function webform_access_history_uninstall() {
+    db_drop_table(WAH_TABLE_NAME);
+}
+
+
+function _webform_access_history_firstrun()
+{
+
+    // does table exist
+    $table_exist = db_table_exists(WAH_TABLE_NAME);
+    if (!$table_exist) {
+
+        dpm('table no exist');
+
+        // build schema
+        $schema = array(
+            'description' => 'Record of who looked at what',
+            'fields' => array(
+                'logged_in_uid' => array('type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE),
+                'submitted_uid' => array('type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE),
+                'sid' => array('type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE),
+                'nid'=> array('type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE),
+                'timestamp' => array('type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => '0'),
+            ),
+        );
+
+        dpm(db_create_table(WAH_TABLE_NAME, $schema));
+    }
+
+}
