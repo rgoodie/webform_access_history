@@ -2,10 +2,9 @@
 
 /**
  * @file
- * TODO: Enter file description here.
+ * Main module file.
  */
 define('WAH_TABLE_NAME', 'webform_access_history');
-
 
 
 /**
@@ -13,32 +12,42 @@ define('WAH_TABLE_NAME', 'webform_access_history');
  */
 function webform_access_history_menu()
 {
+
+    // Routed path to access main form.
     $items['webform/access'] = array(
         'title' => 'Submissions Page',
         'page callback' => 'webform_access_history_report',
-        'access arguments' => array('see submission viewing list'),
+        'access arguments' => array('wah see submission viewing list'),
         'type' => MENU_CALLBACK,
-        'file'=>'webform_access_history.report.inc',
+        'file' => 'webform_access_history.report.inc',
     );
 
+    // Clear current records. Use wisely. This option has a separate permission. It is the
+    // same as an uninstall/reinstall. It runs both this module's _uninstall and _reinstall()
+    // functions to drop and recreate the table.
     $items['webform/access/clear'] = array(
         'title' => 'Submissions Page',
         'page callback' => 'webform_access_history_housekeeping_reset',
         'access arguments' => array('wah reset table'),
         'type' => MENU_CALLBACK,
-        'file'=>'webform_access_history.housekeeping.inc',
+        'file' => 'webform_access_history.housekeeping.inc',
     );
 
     return $items;
 }
 
-function webform_access_history_permission() {
+
+/*
+ * Permissions
+ * */
+function webform_access_history_permission()
+{
     return array(
-        'see submission viewing list' =>  array(
+        'wah see submission viewing list' => array(
             'title' => t('See who has looked at webform submissions'),
             'description' => t('Who is allowed to see submissions look up activity'),
         ),
-        'wah reset table' =>  array(
+        'wah reset table' => array(
             'title' => t('Reset table history'),
             'description' => t('Clears table. Almost like uninstalling and re-installing module'),
         ),
@@ -46,16 +55,28 @@ function webform_access_history_permission() {
 }
 
 /**
+ * Records when someone has looked at a submissions. Triggers off hook_webform_submission_load().
  *
  * @param $submissions
  */
 function webform_access_history_webform_submission_load(&$submissions)
 {
 
-    dpm($submissions);
 
+    // only react on node/%/submission/% Paths
+    preg_match('#node/\d+/submission/\d+#', current_path(), $result);
+
+    // If count is less than one, just return. Don't
+    // do anything more.
+    if (count($result) < 1) {
+        // dpm('not counting');
+        return;
+    }
+
+    // get a copy of the user object
     $whoami = $GLOBALS['user'];
 
+    // record submission view
     foreach ($submissions as $sub) {
         db_insert(WAH_TABLE_NAME)
             ->fields(array(
@@ -63,7 +84,7 @@ function webform_access_history_webform_submission_load(&$submissions)
                 'submitted_uid' => $sub->uid,
                 'sid' => $sub->sid,
                 'nid' => $sub->nid,
-                'timestamp'=>time(),
+                'timestamp' => time(),
             ))
             ->execute();
     }
@@ -72,23 +93,94 @@ function webform_access_history_webform_submission_load(&$submissions)
 }
 
 
-function webform_access_history_install() {
+/**
+ * Implements hook_block_info().
+ */
+function webform_access_history_block_info()
+{
+    $blocks['webform_access_history_showall'] = array(
+        'info' => t('Webform Access History Show All'),
+        'cache' => DRUPAL_NO_CACHE
+    );
+    $blocks['webform_access_history_justmine'] = array(
+        'info' => t('Webform Access History, Just Mine'),
+        'cache' => DRUPAL_NO_CACHE
+    );
+    $blocks['webform_access_history_newones'] = array(
+        'info' => t('Webform Access History, New Ones')  ,
+        'cache' => DRUPAL_NO_CACHE
+    );
+    $blocks['webform_access_history_addJavaScriptObject'] = array(
+        'info' => t('Webform Access Hisotry, Add Info to Javascript'),
+        'cache' => DRUPAL_NO_CACHE
+    );
+
+    return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function webform_access_history_block_view($delta = '')
+{
+
+    module_load_include('inc', 'webform_access_history', 'webform_access_history.report');
+
+    // This example is adapted from node.module.
+    $block = array();
+
+    switch ($delta) {
+        case 'webform_access_history_showall':
+            $block['subject'] = t('All accessed submissions');
+            $block['content'] = webform_access_history_report();
+            break;
+        case 'webform_access_history_justmine':
+            $block = array(
+                'subject' => t('Submissions your user has accessed.'),
+                'content' => webform_access_history_report($GLOBALS['user']->uid),
+            );
+            break;
+        case 'webform_access_history_newones':
+            $block = array(
+                'subject' => t(''),
+                'content' => webform_access_history_new($GLOBALS['user']->uid),
+            );
+        case 'webform_access_history_addJavaScriptObject':
+            $block = array(
+                'subject' => t('<none>'),
+                'content' => webform_access_history_jsObject()
+            );
+
+    }
+    return $block;
+}
+
+
+/**
+ * Implements hook_install()
+ */
+function webform_access_history_install()
+{
     _webform_access_history_firstrun();
 }
 
-function webform_access_history_uninstall() {
+/**
+ * Implements hook_uninstall()
+ */
+function webform_access_history_uninstall()
+{
     db_drop_table(WAH_TABLE_NAME);
 }
 
-
+/**
+ * Helper function that creates the database if it doesn't exists.
+ */
 function _webform_access_history_firstrun()
 {
 
-    // does table exist
-    $table_exist = db_table_exists(WAH_TABLE_NAME);
-    if (!$table_exist) {
+    // If the table doesn't exist, create it.
+    if (!db_table_exists(WAH_TABLE_NAME)) {
 
-        dpm('table no exist');
 
         // build schema
         $schema = array(
@@ -97,12 +189,13 @@ function _webform_access_history_firstrun()
                 'logged_in_uid' => array('type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE),
                 'submitted_uid' => array('type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE),
                 'sid' => array('type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE),
-                'nid'=> array('type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE),
+                'nid' => array('type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE),
                 'timestamp' => array('type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => '0'),
             ),
         );
 
-        dpm(db_create_table(WAH_TABLE_NAME, $schema));
+        // create table
+        db_create_table(WAH_TABLE_NAME, $schema);
     }
 
 }
