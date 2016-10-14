@@ -1,7 +1,8 @@
 <?php
 
 
-function webform_access_history_jsObject() {
+function webform_access_history_jsObject()
+{
     // TODO: add js embed
 
     // enforce permission!
@@ -10,8 +11,8 @@ function webform_access_history_jsObject() {
     }
 
 
-    drupal_add_js(array('webforms_access_history'=>array(
-        'testing'=>true,
+    drupal_add_js(array('webforms_access_history' => array(
+        'testing' => true,
     )), 'setting');
     return 'test';
 }
@@ -27,7 +28,7 @@ function webform_access_history_report($filter_by_uid = 0)
 
     // enforce permission!
     if (!_webform_access_history_enforce_permission()) {
-          return;
+        return;
     }
 
     // No filter, get everybody
@@ -50,44 +51,58 @@ function webform_access_history_report($filter_by_uid = 0)
     return webform_access_history_formatTable($result);
 }
 
-function webform_access_history_new($filter_by_uid = 0) {
+function webform_access_history_new($filter_by_uid = 0)
+{
 
     // enforce permission!
     if (!_webform_access_history_enforce_permission()) {
         return;
     }
 
-    $new_sids= webform_access_history_new_query($filter_by_uid);
+    $new_sids = webform_access_history_new_query($filter_by_uid);
 }
 
-function webform_access_history_new_query($uid) {
+function webform_access_history_new_query($uid)
+{
 
+    // Get all submissions
+    $all_sids = array();
+    $all_sids_result = db_select('webform_submissions', 'ws')
+        ->distinct()
+        ->fields('ws', array('sid'))
+        ->orderby('ws.sid')
+        ->execute()
+        ->fetchAllAssoc('sid');
+    foreach ($all_sids_result as $sid) {
+        $all_sids[] = $sid->sid;
+    }
+    $all_sids = array_unique($all_sids);
 
-    //$all_sids = array_keys(webform_get_submissions());
-
-    $my_sids = db_select(WAH_TABLE_NAME, 'w')
+    // Get sid that this user has seen
+    $my_sids_result = db_select(WAH_TABLE_NAME, 'w')
         ->fields('w', array('sid'))
         ->orderBy('timestamp')
         ->condition('logged_in_uid', $GLOBALS['user']->uid, '=')
         ->execute()
         ->fetchAll();
 
-    $my_sids_list = array();
-    foreach($my_sids as $mysid) {
-        $my_sids_list[] = $mysid->sid;
+    $my_sids = array();
+    foreach ($my_sids_result as $mysid) {
+        $my_sids[] = $mysid->sid;
     }
-    $my_sids_list = array_unique($my_sids_list);
+    $my_sids = array_unique($my_sids);
 
-    dpm($my_sids_list);
+    // return the diffs
+    return array_diff($all_sids, $my_sids);
 
-    return array(0);
 }
 
 /**
  * @param $result of the query
  * @return Table or String.
  */
-function webform_access_history_formatTable($result) {
+function webform_access_history_formatTable($result)
+{
 
     $user_id_array = array();
     $submission_array = array();
@@ -147,7 +162,7 @@ function webform_access_history_formatTable($result) {
 
 
     // if we have a postitive count, return table.
-    if(count($out_bound) > 0) {
+    if (count($out_bound) > 0) {
         return theme_table(array(
             'header' => array_keys($out_bound[0]),
             'rows' => $out_bound,
@@ -157,9 +172,7 @@ function webform_access_history_formatTable($result) {
             'sticky' => '',
             'empty' => ''
         ));
-    }
-
-    // else, just a null message
+    } // else, just a null message
     else {
         return 'No results';
     }
