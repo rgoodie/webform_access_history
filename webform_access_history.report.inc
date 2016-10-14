@@ -3,6 +3,13 @@
 
 function webform_access_history_jsObject() {
     // TODO: add js embed
+
+    // enforce permission!
+    if (!_webform_access_history_enforce_permission()) {
+        return;
+    }
+
+
     drupal_add_js(array('webforms_access_history'=>array(
         'testing'=>true,
     )), 'setting');
@@ -19,10 +26,8 @@ function webform_access_history_report($filter_by_uid = 0)
 {
 
     // enforce permission!
-    if (!user_access('wah see submission viewing list')) {
-        watchdog(__FILE__, t('user does not have permission'));
-        drupal_set_message(t("You don't have permission to see this report."), WATCHDOG_ALERT);
-        return;
+    if (!_webform_access_history_enforce_permission()) {
+          return;
     }
 
     // No filter, get everybody
@@ -46,13 +51,19 @@ function webform_access_history_report($filter_by_uid = 0)
 }
 
 function webform_access_history_new($filter_by_uid = 0) {
+
+    // enforce permission!
+    if (!_webform_access_history_enforce_permission()) {
+        return;
+    }
+
     $new_sids= webform_access_history_new_query($filter_by_uid);
 }
 
 function webform_access_history_new_query($uid) {
 
 
-    $all_sids = array_keys(webform_get_submissions());
+    //$all_sids = array_keys(webform_get_submissions());
 
     $my_sids = db_select(WAH_TABLE_NAME, 'w')
         ->fields('w', array('sid'))

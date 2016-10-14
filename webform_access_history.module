@@ -199,3 +199,10 @@ function _webform_access_history_firstrun()
     }
 
 }
+
+
+
+function _webform_access_history_enforce_permission() {
+    // enforce permission!
+    return user_access('wah see submission viewing list');
+}
