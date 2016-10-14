@@ -3,17 +3,24 @@
 
 function webform_access_history_jsObject()
 {
-    // TODO: add js embed
 
     // enforce permission!
     if (!_webform_access_history_enforce_permission()) {
         return;
     }
 
+    // TODO: check current_path() pattern
 
-    drupal_add_js(array('webforms_access_history' => array(
-        'testing' => true,
-    )), 'setting');
+    // TODO: get current node id
+
+    // TODO: add js embed
+
+
+
+    // set up numbers!
+    // drupal_add_js(array('webforms_access_history' => webform_access_history_new_query()), 'setting');
+
+    // drupal_add_js(drupal_getpath('module', 'webform_access_history') . 'webform_access_history.js', 'module');
     return 'test';
 }
 

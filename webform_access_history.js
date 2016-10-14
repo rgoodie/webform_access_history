@@ -3,7 +3,13 @@
  */
 
 
-// TODO: get list from Drupal object
+jQuery(function() {
 
-// TODO: find all instances o
-// jQuery("[href='/node/%/submission/%']")
+    // TODO: get list from Drupal object
+    console.log
+
+    // TODO: find all instances o
+    // jQuery("[href='/node/%/submission/%']")
+
+})
+
