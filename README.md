@@ -27,10 +27,4 @@ In a JavaScript loop, it finds any reference that links you to a submission and 
 jQuery("[href='/node/" + nid+  "/submission/" + sid_number + "']").attr('style', the_style);
 ```
 
-
-# Feed back
-...and corrections welcomed through [Issue Queue](https://github.com/rgoodie/webform_access_history/issues).
-
-License, GPL 2
-Use at your own risk. 
-https://www.gnu.org/licenses/gpl-2.0.html
+Feed back and corrections welcomed through [Issue Queue](https://github.com/rgoodie/webform_access_history/issues). License, [GPL 2](https://www.gnu.org/licenses/gpl-2.0.html). Use at your own risk. 
