@@ -28,6 +28,9 @@ jQuery("[href='/node/" + nid+  "/submission/" + sid_number + "']").attr('style',
 ```
 
 
-# Feed back 
+# Feed back
 ...and corrections welcomed through (Issue Queue)(https://github.com/rgoodie/webform_access_history/issues).
 
+License, GPL 2
+Use at your own risk. 
+https://www.gnu.org/licenses/gpl-2.0.html
