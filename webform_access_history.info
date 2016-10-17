@@ -4,3 +4,6 @@ dependencies[] = webform
 package = SoC
 core = 7.x
 
+
+configure = webform/access/history/settings
+

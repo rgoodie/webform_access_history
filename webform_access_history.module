@@ -33,7 +33,17 @@ function webform_access_history_menu()
         'file' => 'webform_access_history.housekeeping.inc',
     );
 
-    return $items;
+    // settings page
+    $items['webform/access/history/settings'] = array(
+        'title' => 'Submissions Page',
+        'page callback' => 'webform_access_history_housekeeping_reset',
+        'access arguments' => array('wah reset table'),
+        'type' => MENU_CALLBACK,
+        'file' => 'webform_access_history.housekeeping.inc',
+    );
+}
+
+return $items;
 }
 
 
@@ -50,6 +60,10 @@ function webform_access_history_permission()
         'wah reset table' => array(
             'title' => t('Reset table history'),
             'description' => t('Clears table. Almost like uninstalling and re-installing module'),
+        ),
+        'wah admin module' => array(
+            'title' => t('Administer this module'),
+            'description' => t('Module administration settings '),
         ),
     );
 }
@@ -107,7 +121,7 @@ function webform_access_history_block_info()
         'cache' => DRUPAL_NO_CACHE
     );
     $blocks['webform_access_history_newones'] = array(
-        'info' => t('Webform Access History, New Ones')  ,
+        'info' => t('Webform Access History, New Ones'),
         'cache' => DRUPAL_NO_CACHE
     );
     $blocks['webform_access_history_addJavaScriptObject'] = array(
@@ -201,8 +215,8 @@ function _webform_access_history_firstrun()
 }
 
 
-
-function _webform_access_history_enforce_permission() {
+function _webform_access_history_enforce_permission()
+{
     // enforce permission!
     return user_access('wah see submission viewing list');
 }

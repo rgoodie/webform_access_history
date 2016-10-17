@@ -1,6 +1,14 @@
 <?php
 
-
+/**
+ *
+ * One of the work horses of the function. This block if included will highlight the node submissions
+ * the current logged in user has not yet seen.
+ *
+ *
+ *
+ * @return string|void
+ */
 function webform_access_history_jsObject()
 {
 
@@ -9,18 +17,27 @@ function webform_access_history_jsObject()
         return;
     }
 
-    // TODO: check current_path() pattern
+    // Match. If this doesn't match path, exit.
+    preg_match('#node/(\d)/webform-results#', current_path(), $m);
+    if (!count($m) ) {
+        return;
+    };
+    $nid_from_match = $m[1];
 
-    // TODO: get current node id
+    // Ensure what we think is the node ID is a number. If not
+    // something is wrong. Logic will be askew. Exit here.
+    if (!is_numeric($nid_from_match)) {
+        return;
+    }
 
-    // TODO: add js embed
+    // Make the browser aware of our important numbers
+    drupal_add_js(array('webforms_access_history' => webform_access_history_new_query($nid_from_match)), 'setting');
+    drupal_add_js(array('webforms_access_history_guessed_nid' => $nid_from_match), 'setting');
 
-
-
-    // set up numbers!
-    // drupal_add_js(array('webforms_access_history' => webform_access_history_new_query()), 'setting');
-
-    // drupal_add_js(drupal_getpath('module', 'webform_access_history') . 'webform_access_history.js', 'module');
+    drupal_add_js(drupal_get_path('module', 'webform_access_history') . '/webform_access_history.js', array(
+        'scope'=>'footer',
+        'weight'=>-1000
+    ));
     return 'test';
 }
 
