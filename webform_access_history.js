@@ -13,10 +13,13 @@ jQuery(function() {
         // this NID
         var nid = Drupal.settings.webforms_access_history_guessed_nid;
 
+        // the style (from Drupal settings)
+        var the_style = Drupal.settings.webforms_access_history_style
+
         // loop through, find <a> tag and add class
-        for (index in Drupal.settings.webforms_access_history) {
-            sid_number =Drupal.settings.webforms_access_history[index];
-            jQuery("[href='/node/" + nid+  "/submission/" + sid_number + "']").attr('style', 'border: 1px solid red;');
+        for (var index in Drupal.settings.webforms_access_history) {
+            var sid_number =Drupal.settings.webforms_access_history[index];
+            jQuery("[href='/node/" + nid+  "/submission/" + sid_number + "']").attr('style', the_style);
         }
 
 

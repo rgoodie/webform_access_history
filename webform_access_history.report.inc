@@ -5,8 +5,6 @@
  * One of the work horses of the function. This block if included will highlight the node submissions
  * the current logged in user has not yet seen.
  *
- *
- *
  * @return string|void
  */
 function webform_access_history_jsObject()
@@ -18,7 +16,7 @@ function webform_access_history_jsObject()
     }
 
     // Match. If this doesn't match path, exit.
-    preg_match('#node/(\d)/webform-results#', current_path(), $m);
+    preg_match('#node/(\d+)/webform-results#', current_path(), $m);
     if (!count($m) ) {
         return;
     };
@@ -30,9 +28,12 @@ function webform_access_history_jsObject()
         return;
     }
 
-    // Make the browser aware of our important numbers
+    // Make the browser aware of our important numbers.
     drupal_add_js(array('webforms_access_history' => webform_access_history_new_query($nid_from_match)), 'setting');
     drupal_add_js(array('webforms_access_history_guessed_nid' => $nid_from_match), 'setting');
+
+    // Throw over CSS class
+    drupal_add_js(array('webforms_access_history_style'=>variable_get('wah_selected_style', WAH_DEFAULT_HIGHLIGHT_CSS)), 'setting');
 
     drupal_add_js(drupal_get_path('module', 'webform_access_history') . '/webform_access_history.js', array(
         'scope'=>'footer',

@@ -5,6 +5,7 @@
  * Main module file.
  */
 define('WAH_TABLE_NAME', 'webform_access_history');
+define('WAH_DEFAULT_HIGHLIGHT_CSS', 'border: 4px solid red;');
 
 
 /**
@@ -13,37 +14,17 @@ define('WAH_TABLE_NAME', 'webform_access_history');
 function webform_access_history_menu()
 {
 
-    // Routed path to access main form.
-    $items['webform/access'] = array(
-        'title' => 'Submissions Page',
-        'page callback' => 'webform_access_history_report',
-        'access arguments' => array('wah see submission viewing list'),
-        'type' => MENU_CALLBACK,
-        'file' => 'webform_access_history.report.inc',
-    );
-
-    // Clear current records. Use wisely. This option has a separate permission. It is the
-    // same as an uninstall/reinstall. It runs both this module's _uninstall and _reinstall()
-    // functions to drop and recreate the table.
-    $items['webform/access/clear'] = array(
-        'title' => 'Submissions Page',
-        'page callback' => 'webform_access_history_housekeeping_reset',
-        'access arguments' => array('wah reset table'),
-        'type' => MENU_CALLBACK,
-        'file' => 'webform_access_history.housekeeping.inc',
-    );
-
     // settings page
     $items['webform/access/history/settings'] = array(
-        'title' => 'Submissions Page',
-        'page callback' => 'webform_access_history_housekeeping_reset',
-        'access arguments' => array('wah reset table'),
+        'title' => 'Webform Access History - Settings',
+        'page callback' => 'webform_access_history_options',
+        'access arguments' => array('wah admin module'),
         'type' => MENU_CALLBACK,
-        'file' => 'webform_access_history.housekeeping.inc',
+        'file' => 'webform_access_history.admin.inc',
     );
-}
 
-return $items;
+
+    return $items;
 }
 
 
@@ -69,13 +50,13 @@ function webform_access_history_permission()
 }
 
 /**
- * Records when someone has looked at a submissions. Triggers off hook_webform_submission_load().
+ * Records when someone has looked at a submissions. Triggers off hook_webform_submission_load(). This is the
+ * other work horse of this function. It *records* each time a logged in user looks at a submission.
  *
  * @param $submissions
  */
 function webform_access_history_webform_submission_load(&$submissions)
 {
-
 
     // only react on node/%/submission/% Paths
     preg_match('#node/\d+/submission/\d+#', current_path(), $result);
@@ -124,6 +105,7 @@ function webform_access_history_block_info()
         'info' => t('Webform Access History, New Ones'),
         'cache' => DRUPAL_NO_CACHE
     );
+
     $blocks['webform_access_history_addJavaScriptObject'] = array(
         'info' => t('Webform Access Hisotry, Add Info to Javascript'),
         'cache' => DRUPAL_NO_CACHE
