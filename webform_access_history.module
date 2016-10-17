@@ -93,21 +93,10 @@ function webform_access_history_webform_submission_load(&$submissions)
  */
 function webform_access_history_block_info()
 {
-    $blocks['webform_access_history_showall'] = array(
-        'info' => t('Webform Access History Show All'),
-        'cache' => DRUPAL_NO_CACHE
-    );
-    $blocks['webform_access_history_justmine'] = array(
-        'info' => t('Webform Access History, Just Mine'),
-        'cache' => DRUPAL_NO_CACHE
-    );
-    $blocks['webform_access_history_newones'] = array(
-        'info' => t('Webform Access History, New Ones'),
-        'cache' => DRUPAL_NO_CACHE
-    );
-
+    // Main block that inserts JavaScript logic to highlight
+    // unseen submissions
     $blocks['webform_access_history_addJavaScriptObject'] = array(
-        'info' => t('Webform Access Hisotry, Add Info to Javascript'),
+        'info' => t('Webform Access Hisotry, Add Info to Javascript (Main Block)'),
         'cache' => DRUPAL_NO_CACHE
     );
 
@@ -119,28 +108,13 @@ function webform_access_history_block_info()
  */
 function webform_access_history_block_view($delta = '')
 {
-
     module_load_include('inc', 'webform_access_history', 'webform_access_history.report');
 
     // This example is adapted from node.module.
     $block = array();
 
     switch ($delta) {
-        case 'webform_access_history_showall':
-            $block['subject'] = t('All accessed submissions');
-            $block['content'] = webform_access_history_report();
-            break;
-        case 'webform_access_history_justmine':
-            $block = array(
-                'subject' => t('Submissions your user has accessed.'),
-                'content' => webform_access_history_report($GLOBALS['user']->uid),
-            );
-            break;
-        case 'webform_access_history_newones':
-            $block = array(
-                'subject' => t(''),
-                'content' => webform_access_history_new($GLOBALS['user']->uid),
-            );
+
         case 'webform_access_history_addJavaScriptObject':
             $block = array(
                 'subject' => t('<none>'),
@@ -169,7 +143,7 @@ function webform_access_history_uninstall()
 }
 
 /**
- * Helper function that creates the database if it doesn't exists.
+ * Helper function that creates the database if it does not exists.
  */
 function _webform_access_history_firstrun()
 {

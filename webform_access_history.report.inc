@@ -44,7 +44,7 @@ function webform_access_history_jsObject()
 
 
 /**
- * Produces a table of all histories.
+ * Extra content Produces a table of all histories.
  * @param int $filter_by_uid
  * @return Table
  */
@@ -76,7 +76,7 @@ function webform_access_history_report($filter_by_uid = 0)
     return webform_access_history_formatTable($result);
 }
 
-function webform_access_history_new($filter_by_uid = 0)
+/*function webform_access_history_new($filter_by_uid = 0)
 {
 
     // enforce permission!
@@ -85,7 +85,7 @@ function webform_access_history_new($filter_by_uid = 0)
     }
 
     $new_sids = webform_access_history_new_query($filter_by_uid);
-}
+}*/
 
 function webform_access_history_new_query($uid)
 {
