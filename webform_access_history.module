@@ -95,7 +95,7 @@ function webform_access_history_block_info()
 {
     // Main block that inserts JavaScript logic to highlight
     // unseen submissions
-    $blocks['webform_access_history_addJavaScriptObject'] = array(
+    $blocks['webform_access_history_jsblock'] = array(
         'info' => t('Webform Access Hisotry, Add Info to Javascript (Main Block)'),
         'cache' => DRUPAL_NO_CACHE
     );
@@ -115,7 +115,7 @@ function webform_access_history_block_view($delta = '')
 
     switch ($delta) {
 
-        case 'webform_access_history_addJavaScriptObject':
+        case 'webform_access_history_jsblock':
             $block = array(
                 'subject' => t('<none>'),
                 'content' => webform_access_history_jsObject()
