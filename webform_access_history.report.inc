@@ -39,7 +39,7 @@ function webform_access_history_jsObject()
         'scope'=>'footer',
         'weight'=>-1000
     ));
-    return 'test';
+    return '<!-- webform_access_history JavaScript object loaded -->';
 }
 
 
