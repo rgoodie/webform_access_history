@@ -75,20 +75,25 @@ function webform_access_history_webform_submission_load(&$submissions)
 
     // record submission view
     foreach ($submissions as $sub) {
-        db_insert(WAH_TABLE_NAME)
-            ->fields(array(
-                'logged_in_uid' => $whoami->uid,
-                'submitted_uid' => $sub->uid,
-                'sid' => $sub->sid,
-                'nid' => $sub->nid,
-                'timestamp' => time(),
-            ))
-            ->execute();
+        _webform_access_history_do_recording($whoami->uid, $sub->uid,$sub->sid , $sub->nid );
+
     }
 
 
 }
 
+
+function _webform_access_history_do_recording($logged_in_uid, $submitted_uid, $sid, $nid) {
+    db_insert(WAH_TABLE_NAME)
+        ->fields(array(
+            'logged_in_uid' => $logged_in_uid,
+            'submitted_uid' => $submitted_uid,
+            'sid' => $sid,
+            'nid' => $nid,
+            'timestamp' => time(),
+        ))
+        ->execute();
+}
 
 /**
  * Implements hook_block_info().
