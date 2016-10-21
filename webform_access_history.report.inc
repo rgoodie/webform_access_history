@@ -26,12 +26,10 @@ function webform_access_history_jsObject()
     }
 
 
-    // Infer node ID
-    $nid_from_match = arg(1);
-    dpm($nid_from_match);
-
+    // Infer node ID the old fashion way. 
     // Ensure what we think is the node ID is a number. If not
     // something is wrong. Logic will be askew. Exit here.
+    $nid_from_match = arg(1);
     if (!is_numeric($nid_from_match)) {
         return '<!-- webform_access_history: Inferred node ID was not numeric -->';
     }
