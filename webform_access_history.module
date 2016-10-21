@@ -18,11 +18,23 @@ function webform_access_history_menu()
     // settings page
     $items['webform/access/history/settings'] = array(
         'title' => 'Webform Access History - Settings',
-        'page callback'=>array('drupal_get_form'),
+        'page callback' => array('drupal_get_form'),
         'page arguments' => array('webform_access_history_options'),
         'access arguments' => array('wah admin module'),
         'type' => MENU_CALLBACK,
         'file' => 'webform_access_history.admin.inc',
+    );
+
+
+    // AJAX hit to increase the count
+    // sid - submission id
+    $items['webform/access/ajax/%'] = array(
+        'title' => 'Example AJAX add to list',
+        'page callback' => '_webform_access_history_ajax_process',
+        'page arguments' => array(3),
+        'access arguments' => array('wah admin module'),
+        'type' => MENU_CALLBACK,
+        'file' => 'webform_access_history.ajax.inc'
     );
 
 
@@ -75,16 +87,38 @@ function webform_access_history_webform_submission_load(&$submissions)
 
     // record submission view
     foreach ($submissions as $sub) {
-        _webform_access_history_do_recording($whoami->uid, $sub->uid,$sub->sid , $sub->nid );
+        _webform_access_history_do_recording($whoami->uid, $sub->uid, $sub->sid, $sub->nid);
 
     }
 
 
 }
 
+/**
+ * @param $logged_in_uid
+ * @param $submitted_uid
+ * @param $sid
+ * @param $nid
+ */
+function _webform_access_history_do_recording($logged_in_uid, $submitted_uid, $sid, $nid)
+{
+    /* return db_insert(WAH_TABLE_NAME)
+        ->fields(array(
+            'logged_in_uid' => $logged_in_uid,
+            'submitted_uid' => $submitted_uid,
+            'sid' => $sid,
+            'nid' => $nid,
+            'timestamp' => time(),
+        ))
+        ->execute();*/
 
-function _webform_access_history_do_recording($logged_in_uid, $submitted_uid, $sid, $nid) {
-    db_insert(WAH_TABLE_NAME)
+    return db_merge(WAH_TABLE_NAME)
+        ->key(array(
+            'logged_in_uid' => $logged_in_uid,
+            'submitted_uid' => $submitted_uid,
+            'sid' => $sid,
+            'nid' => $nid,
+        ))
         ->fields(array(
             'logged_in_uid' => $logged_in_uid,
             'submitted_uid' => $submitted_uid,
@@ -93,6 +127,7 @@ function _webform_access_history_do_recording($logged_in_uid, $submitted_uid, $s
             'timestamp' => time(),
         ))
         ->execute();
+
 }
 
 /**
