@@ -25,6 +25,7 @@ function webform_access_history_jsObject()
         return '<!-- webform_access_history: JavaScript object NOT loaded. Path does not match. -->';
     }
 
+    
     // Infer node ID
     $nid_from_match = arg(1);
     dpm($nid_from_match);
