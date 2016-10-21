@@ -21,7 +21,7 @@ jQuery(function () {
         // loop through, find <a> tag and add class
         for (var index in Drupal.settings.webforms_access_history) {
             var sid_number = Drupal.settings.webforms_access_history[index];
-            jQuery("[href$='node/" + nid + "/submission/" + sid_number + "']").attr('style', the_style);
+            jQuery("[href$='node/" + nid + "/submission/" + sid_number + "']").closest('tr').attr('style', the_style);
         }
 
 
