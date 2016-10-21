@@ -40,5 +40,11 @@ jQuery('tr').click(function() {
     var sid = this_href.split("/").pop();
     console.log(sid);
     self.attr('style','');
+
+
+    jQuery.ajax('?q=webform/access/ajax/' + sid, function (data, status) {
+        console.log(data);
+        console.log(status);
+    })
 });
 
