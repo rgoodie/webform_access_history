@@ -102,15 +102,6 @@ function webform_access_history_webform_submission_load(&$submissions)
  */
 function _webform_access_history_do_recording($logged_in_uid, $submitted_uid, $sid, $nid)
 {
-    /* return db_insert(WAH_TABLE_NAME)
-        ->fields(array(
-            'logged_in_uid' => $logged_in_uid,
-            'submitted_uid' => $submitted_uid,
-            'sid' => $sid,
-            'nid' => $nid,
-            'timestamp' => time(),
-        ))
-        ->execute();*/
 
     return db_merge(WAH_TABLE_NAME)
         ->key(array(
