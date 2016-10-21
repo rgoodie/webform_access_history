@@ -18,7 +18,8 @@ function webform_access_history_menu()
     // settings page
     $items['webform/access/history/settings'] = array(
         'title' => 'Webform Access History - Settings',
-        'page callback' => 'webform_access_history_options',
+        'page callback'=>array('drupal_get_form'),
+        'page arguments' => array('webform_access_history_options'),
         'access arguments' => array('wah admin module'),
         'type' => MENU_CALLBACK,
         'file' => 'webform_access_history.admin.inc',
