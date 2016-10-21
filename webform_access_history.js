@@ -30,3 +30,15 @@ jQuery(function () {
 
 })
 
+
+/*
+ * Click bind for ajax tracking
+ */
+jQuery('tr').click(function() {
+    var self = jQuery(this);
+    var this_href = self.find('a').attr('href');
+    var sid = this_href.split("/").pop();
+    console.log(sid);
+    self.attr('style','');
+});
+
