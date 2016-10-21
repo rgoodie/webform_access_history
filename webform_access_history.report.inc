@@ -12,20 +12,27 @@ function webform_access_history_jsObject()
 
     // enforce permission!
     if (!_webform_access_history_enforce_permission()) {
-        return;
+        return '<!-- webform_access_history: Permission. -->';
     }
 
-    // Match. If this doesn't match path, exit.
-    preg_match('#node/(\d+)/webform-results#', current_path(), $m);
-    if (!count($m) ) {
-        return;
-    };
-    $nid_from_match = $m[1];
+    // Find out which path this page call has. Have a ready list of
+    // paths that we're happy to work through. If it matches one continue processing.
+    // IF not gracefully exit
+    $me = menu_get_item();
+    $process_paths = explode(',', variable_get('wah_allowed_paths', WAH_DEFAULT_ALLOWED_PATHS));
+    // dpm($me);
+    if (! in_array($me['path'], $process_paths) ) {
+        return '<!-- webform_access_history: JavaScript object NOT loaded. Path does not match. -->';
+    }
+
+    // Infer node ID
+    $nid_from_match = arg(1);
+    dpm($nid_from_match);
 
     // Ensure what we think is the node ID is a number. If not
     // something is wrong. Logic will be askew. Exit here.
     if (!is_numeric($nid_from_match)) {
-        return;
+        return '<!-- webform_access_history: Inferred node ID was not numeric -->';
     }
 
     // Make the browser aware of our important numbers.
@@ -44,6 +51,12 @@ function webform_access_history_jsObject()
 
 
 
+
+function webform_access_history_custom_results_soc() {
+
+
+    return '<-- webform_access_history SOC custom JavaScript Object';
+}
 
 
 function webform_access_history_new_query($uid)

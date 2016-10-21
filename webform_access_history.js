@@ -5,6 +5,8 @@
 // wait until jQ is ready.
 jQuery(function() {
 
+    console.log('webform_access_history enabled');
+
 
     // wait until the object is created
     jQuery(Drupal.settings.webforms_access_history).ready(function() {
@@ -19,7 +21,8 @@ jQuery(function() {
         // loop through, find <a> tag and add class
         for (var index in Drupal.settings.webforms_access_history) {
             var sid_number =Drupal.settings.webforms_access_history[index];
-            jQuery("[href='/node/" + nid+  "/submission/" + sid_number + "']").attr('style', the_style);
+            console.log("[href$='/node/" + nid+  "/submission/" + sid_number + "']");
+            jQuery("[href$='node/" + nid+  "/submission/" + sid_number + "']").attr('style', the_style);
         }
 
 
