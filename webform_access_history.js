@@ -44,7 +44,17 @@ jQuery('tr').click(function() {
 
     jQuery.ajax('?q=webform/access/ajax/' + sid, function (data, status) {
         console.log(data);
-        console.log(status);
+
+
+
+
+
+
+
+
+
+
+
     })
 });
 
