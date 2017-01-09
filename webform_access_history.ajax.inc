@@ -8,12 +8,7 @@
 
 function _webform_access_history_ajax_process($sid) {
 
-    error_reporting(E_ALL);
-    ini_set('display_errors', 1);
-
     $logged_in = $GLOBALS['user'];
-
-
 
     require_once(drupal_get_path('module', 'webform') . '/includes/webform.submissions.inc');
     $submission = webform_get_submissions(array( 'sid' => $sid));
